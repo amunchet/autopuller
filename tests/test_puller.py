@@ -47,6 +47,8 @@ def test_restart_service():
     assert puller.restart_service("/tmp", True) == [
         "docker-compose",
         "up",
+        "-f",
+        "{{COMPOSEFILE}}",
         "--build",
         "-d",
     ]
