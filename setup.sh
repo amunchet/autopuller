@@ -13,10 +13,10 @@ echo "Please enter local path to repository (e.g. /home/amunchet/autopuller).  T
 echo "NOTE: This must be the full path, not a relative path"
 read REPODIR
 
-read -r -p "Please enter docker-compose yml filename FOR THE REPO TO USE TO RESTART(default: docker-compose.yml)" composefile
+read -r -p "Please enter docker-compose yml filename FOR THE REPO TO USE TO RESTART(default: docker-compose.yml): " composefile
 composefile=${composefile:-docker-compose.yml}
 
-read -r -p "Please enter credentials location (full path) to log into git (e.g. /home/user/.git-credentials)" credentials
+read -r -p "Please enter credentials location (full path) to log into git (e.g. /home/user/.git-credentials): " credentials
 
 read -r -p "Enter watch interval (default is 60)" INTERVAL
 INTERVAL=${INTERVAL:-60}
@@ -33,6 +33,9 @@ sed -i "s/{{COMPOSEFILE}}/$composefile/g" .env
 # MODIFY docker-compose.yml.template
 cp docker-compose.yml.template docker-compose.yml
 sed -i "s/{{PATH}}/${REPODIR//\//\\/}/g" docker-compose.yml
-sed -i "s/{{CREDENTIALS}}/$credentials/g" docker-compose.yml
+sed -i "s/{{CREDENTIALS}}/${credentials//\//\\/}/g" docker-compose.yml
+
+echo "Starting up docker-compose..."
+docker-compose up --build -d
 
 echo "Done."
