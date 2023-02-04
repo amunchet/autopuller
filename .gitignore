@@ -1,3 +1,4 @@
 virtualenv/**
 .env
 **.pyc
+.coverage

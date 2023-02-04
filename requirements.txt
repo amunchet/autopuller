@@ -1,4 +1,5 @@
 python-dotenv
+pytest-cov
 requests
 pytest
 semantic_version

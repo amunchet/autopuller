@@ -125,8 +125,7 @@ def list_differences_commits(older_sha, newer_sha):
 
     return [x['commit']['message'] for x in a.json()['commits']]
 
-
-def main(filename="/var/log/autopuller"):
+def main(filename="/var/log/autopuller"): # pragma: no cover
     """Main running function"""
     logger.debug("Filename is: " + filename)
 

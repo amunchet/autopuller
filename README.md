@@ -1,4 +1,4 @@
-# Github CD Autopuller
+# Github Continuous Deployment (CD) Autopuller
 
 Find yourself just larger than single dockers, but too small for Kubernetes?  Are you using `docker-compose` in production?  Are you using Github Actions but deploying on a local server?  Autopuller is for you (and me, actually). 
 
