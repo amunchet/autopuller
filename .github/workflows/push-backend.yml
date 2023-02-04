@@ -6,11 +6,16 @@ jobs:
     env:
       REMOTE: GITHUB
       PYTHONDONTWRITEBYTECODE: 1  
-      PYTHONFLAGS: -B  
+      PYTHONFLAGS: -B
+      GITHUBKEY: ${{secrets.GITHUBKEY}}  
 
     steps:
       - uses: actions/checkout@v2
         
+
       - name: List the env variables
         run: echo $DOCKERIZED && echo $PRODUCTION
+
+      - name: Check the secret
+        run: echo $GITHUBKEY | head -c 3
         
