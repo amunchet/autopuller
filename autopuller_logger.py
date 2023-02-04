@@ -7,7 +7,7 @@ logger.setLevel(logging.INFO)
 
 # Create a file handler and a stream handler
 if os.environ.get("REMOTE") == "GITHUB":
-    file_handler = logging.FileHandler("/tmp")
+    file_handler = logging.FileHandler("/tmp/autopuller")
 else:
     file_handler = logging.FileHandler("/var/log/autopuller")
 
