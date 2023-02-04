@@ -1,9 +1,10 @@
 import logging
 import os
+import sys
 
 # Set up a logger
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
+logger.setLevel(logging.DEBUG)
 
 # Create a file handler and a stream handler
 if os.environ.get("REMOTE") == "GITHUB":
@@ -11,7 +12,7 @@ if os.environ.get("REMOTE") == "GITHUB":
 else:
     file_handler = logging.FileHandler("/var/log/autopuller")
 
-stream_handler = logging.StreamHandler()
+stream_handler = logging.StreamHandler(sys.stderr)
 
 # Set the level for both handlers
 file_handler.setLevel(logging.INFO)
@@ -25,3 +26,4 @@ stream_handler.setFormatter(formatter)
 # Add the handlers to the logger
 logger.addHandler(file_handler)
 logger.addHandler(stream_handler)
+
