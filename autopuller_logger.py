@@ -1,11 +1,16 @@
 import logging
+import os
 
 # Set up a logger
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 # Create a file handler and a stream handler
-file_handler = logging.FileHandler("/var/log/autopuller")
+if os.environ.get("REMOTE") == "GITHUB":
+    file_handler = logging.FileHandler("/tmp")
+else:
+    file_handler = logging.FileHandler("/var/log/autopuller")
+
 stream_handler = logging.StreamHandler()
 
 # Set the level for both handlers
