@@ -20,26 +20,26 @@ logger.debug("Autopuller starting up...")
 
 
 # Load env variables
-if os.path.exists(".env"):
+if os.path.exists(".env"): # pragma: no cover
     dotenv.load_dotenv()
 elif os.path.exists(".env.sample"):
     logger.debug("Loading sample environment...")
     dotenv.load_dotenv(".env.sample")
-else:
+else: # pragma: no cover
     raise Exception ("No .env file found")
 
 # TODO: Env variables
 GITHUBKEY=os.environ.get("GITHUBKEY") 
 
-if not GITHUBKEY:
+if not GITHUBKEY: # pragma: no cover
     raise Exception("No GITHUBKEY found")
 
 REPONAME=os.environ.get("REPONAME")
-if not REPONAME:
+if not REPONAME: # pragma: no cover
     raise Exception("No REPONAME set")
 
 REPODIR=os.environ.get("REPODIR")
-if not REPODIR:
+if not REPODIR: # pragma: no cover
     raise Exception("No REPODIR set")
 
 MASTERFILE="/repo/.git/refs/heads/master" # Docker-compose mounts repo to /repo
@@ -103,7 +103,7 @@ def check_differences(older_sha, newer_sha):
 
     try:
         return [x['filename'] for x in a.json()['files']]
-    except Exception:
+    except Exception: # pragma: no cover
         logger.error(a.json())
         raise Exception("Error comparing commits")
 
@@ -112,7 +112,7 @@ def fetchSum():
     try:
         headers = { 'Authorization' : f"token {GITHUBKEY}" }
         a = requests.get(f"https://api.github.com/repos{REPONAME}commits/master", headers=headers)
-    except TypeError:
+    except TypeError: # pragma: no cover
         logger.error(f"Fetch Sum failed: {REPONAME}")
         raise Exception("Fetch Sum failed.  ENV file is probably empty.  Create .env with contents GITHUBKEY=XXXX")
 
@@ -191,8 +191,7 @@ def main(filename="/var/log/autopuller"): # pragma: no cover
         logger.debug("Sums match.  Nothing to do.")
         return False
 
-if __name__ == "__main__":
-
+if __name__ == "__main__": # pragma: no cover
     try:
         while True:
             main()
