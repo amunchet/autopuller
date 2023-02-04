@@ -34,9 +34,15 @@ GITHUBKEY = os.environ.get("GITHUBKEY")
 if not GITHUBKEY:  # pragma: no cover
     raise Exception("No GITHUBKEY found")
 
-REPONAME = os.environ.get("REPONAME")
+REPONAME = os.environ.get("REPONAME").replace("www.", "").replace("https://github.com/", "")
 if not REPONAME:  # pragma: no cover
     raise Exception("No REPONAME set")
+
+if REPONAME[0] != "/":
+    REPONAME = f"/{REPONAME}"
+if REPONAME[:-1] != "/":
+    REPONAME = f"{REPONAME}/"
+    
 
 REPODIR = os.environ.get("REPODIR")
 if not REPODIR:  # pragma: no cover
@@ -117,15 +123,17 @@ def fetchSum():
     """Fetches the sum from github"""
     try:
         headers = {"Authorization": f"token {GITHUBKEY}"}
+        url = f"https://api.github.com/repos{REPONAME}commits/master"
         a = requests.get(
-            f"https://api.github.com/repos{REPONAME}commits/master", headers=headers
+            url, headers=headers
         )
     except TypeError:  # pragma: no cover
         logger.error(f"Fetch Sum failed: {REPONAME}")
         raise Exception(
             "Fetch Sum failed.  ENV file is probably empty.  Create .env with contents GITHUBKEY=XXXX"
         )
-
+    logger.warning(a.json())
+    logger.warning(url)
     return a.json()
 
 
@@ -216,5 +224,5 @@ if __name__ == "__main__":  # pragma: no cover
     except Exception as e:
         logger.error(str(e))
         logger.error(sys.exc_info()[1])
-        with open(filename) as f:
+        with open("/var/log/autopuller") as f:
             send_email(f.read())
