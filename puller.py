@@ -42,7 +42,7 @@ REPODIR = os.environ.get("REPODIR")
 if not REPODIR:  # pragma: no cover
     raise Exception("No REPODIR set")
 
-MASTERFILE = "/repo/.git/refs/heads/master"  # Docker-compose mounts repo to /repo
+MASTERFILE = f"{REPODIR}/.git/refs/heads/master"  # Docker-compose mounts repo to /repo
 
 TO = os.environ.get("EMAIL_TO")
 FROM = os.environ.get("EMAIL_FROM")

@@ -6,5 +6,4 @@ services:
     volumes:
       - ./:/src
       - /var/run/docker.sock:/var/run/docker.sock
-      - /repo:{{PATH}}
       - {{PATH}}:{{PATH}}
