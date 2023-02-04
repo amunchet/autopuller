@@ -1,3 +1,5 @@
+[![Autopuller Tests and Linting](https://github.com/amunchet/autopuller/actions/workflows/push-backend.yml/badge.svg)](https://github.com/amunchet/autopuller/actions/workflows/push-backend.yml)
+
 # Github Continuous Deployment (CD) Autopuller
 
 Find yourself just larger than single dockers, but too small for Kubernetes?  Are you using `docker-compose` in production?  Are you using Github Actions but deploying on a local server?  Autopuller is for you (and me, actually). 
