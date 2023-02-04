@@ -2,3 +2,4 @@ virtualenv/**
 .env
 **.pyc
 .coverage
+docker-compose.yml

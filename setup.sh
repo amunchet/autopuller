@@ -14,7 +14,7 @@ echo "NOTE: This must be the full path, not a relative path"
 read REPODIR
 
 read -r -p "Please enter docker-compose yml filename (default: docker-compose.yml)" composefile
-composefile=${composefile:"-docker-compose.yml"}
+composefile=${composefile:-docker-compose.yml}
 
 read -r -p "Enter watch interval (default is 60)" INTERVAL
 INTERVAL=${INTERVAL:-60}
