@@ -35,7 +35,9 @@ GITHUBKEY = os.environ.get("GITHUBKEY")
 if not GITHUBKEY:  # pragma: no cover
     raise Exception("No GITHUBKEY found")
 
-REPONAME = os.environ.get("REPONAME").replace("www.", "").replace("https://github.com/", "")
+REPONAME = (
+    os.environ.get("REPONAME").replace("www.", "").replace("https://github.com/", "")
+)
 if not REPONAME:  # pragma: no cover
     raise Exception("No REPONAME set")
 
@@ -43,7 +45,7 @@ if REPONAME[0] != "/":
     REPONAME = f"/{REPONAME}"
 if REPONAME[-1] != "/":
     REPONAME = f"{REPONAME}/"
-    
+
 
 REPODIR = os.environ.get("REPODIR")
 if not REPODIR:  # pragma: no cover
@@ -59,7 +61,6 @@ INTERVAL = os.environ.get("INTERVAL") or "60"
 COMPOSEFILE = os.environ.get("COMPOSEFILE") or "docker-compose.yml"
 
 
-
 def check_lastrun(sha):
     """Checks the last action run from the github"""
     # Step 2: Test to see if the tests are passing
@@ -67,9 +68,7 @@ def check_lastrun(sha):
     headers = {"Authorization": f"token {GITHUBKEY}"}
     url = f"https://api.github.com/repos{REPONAME}actions/runs"
     logger.debug(f"Check last run url: {url}")
-    a = requests.get(
-        url, headers=headers
-    )
+    a = requests.get(url, headers=headers)
 
     logger.debug(a)
 
@@ -118,9 +117,7 @@ def fetchSum():
     try:
         headers = {"Authorization": f"token {GITHUBKEY}"}
         url = f"https://api.github.com/repos{REPONAME}commits/master"
-        a = requests.get(
-            url, headers=headers
-        )
+        a = requests.get(url, headers=headers)
     except TypeError:  # pragma: no cover
         logger.error(f"Fetch Sum failed: {REPONAME}")
         raise Exception(
@@ -194,14 +191,21 @@ def main(filename="/var/log/autopuller"):  # pragma: no cover
             logger.debug("Current directory:")
             logger.debug(os.listdir("."))
 
-            subprocess.run("git config credential.helper store", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            subprocess.run(
+                "git config credential.helper store",
+                shell=True,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+            )
 
             # Add global safe directory
             cmd = f"git config --globa --add safe.directory {REPODIR}"
             logger.debug("Adding safe directory...")
             logger.debug(str(cmd))
 
-            result = subprocess.run(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            result = subprocess.run(
+                cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE
+            )
             if result.returncode == 0:
                 logger.debug("Git permissions OK")
                 logger.debug(result.stdout.decode("utf-8"))
@@ -211,9 +215,10 @@ def main(filename="/var/log/autopuller"):  # pragma: no cover
                 logger.error(result.stderr.decode("utf-8"))
                 raise Exception("Git permissions failed")
 
-            
             logger.debug("Starting git pull...")
-            result = subprocess.run("git pull", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            result = subprocess.run(
+                "git pull", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE
+            )
 
             if result.returncode == 0:
                 logger.debug("Git pull OK")
