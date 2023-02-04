@@ -1,4 +1,4 @@
-name: Jupiter Backend Tests
+name: Autopuller Tests
 on: push
 jobs:
   backend-tests:
