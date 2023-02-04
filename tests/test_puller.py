@@ -40,7 +40,11 @@ def test_restart_service():
     """
     Tests restarting the service
     """
-    assert puller.restart_service("test", 1) == puller.BACKEND_RESTART + " test"
+    assert os.getcwd() != "/tmp"
+    assert puller.restart_service(True) == ["docker-compose", "up", "--build", "-d"]
+    assert os.getcwd() == "/tmp"
+
+
 
 
 

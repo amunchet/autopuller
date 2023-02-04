@@ -38,7 +38,11 @@ REPONAME=os.environ.get("REPONAME")
 if not REPONAME:
     raise Exception("No REPONAME set")
 
-MASTERFILE="../../.git/refs/heads/master"
+REPODIR=os.environ.get("REPODIR")
+if not REPODIR:
+    raise Exception("No REPODIR set")
+
+MASTERFILE="/repo/.git/refs/heads/master" # Docker-compose mounts repo to /repo
 
 TO=os.environ.get("EMAIL_TO")
 FROM=os.environ.get("EMAIL_FROM")
@@ -46,6 +50,8 @@ SUBJECT= os.environ.get("EMAIL_SUBJECT")
 
 SENDMAIL = os.environ.get("SENDMAIL_CMD") or "mail -s"
 LINTING_COMMIT_MSG=os.environ.get("LINTING_COMMIT_MSG") or "Automatic linting fix"
+
+INTERVAL = os.environ.get("INTERVAL") or "60"
 
 def send_email(TEXT): # pragma: no cover
     """Send email helper"""
@@ -112,12 +118,23 @@ def fetchSum():
 
     return a.json()
 
-def restart_service(name, dry_run = False):
+def restart_service(repo_dir, dry_run = False):
     """
     Restarts the docker-compose stack
-    NOTE: This has changed since the original
     """
-    raise Exception("TODO: Not Implemented Yet")
+    cmd = ["docker-compose", "up", "--build", "-d"]
+
+    os.chdir(repo_dir)
+
+    if dry_run:
+        return cmd
+    else: # pragma: no cover
+        subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        if result.returncode == 0:
+            logger.debug(result.stdout.decode('utf-8'))
+        else:
+            logger.error(result.stderr.decode('utf-8'))
+        return result.returncode
 
 def list_differences_commits(older_sha, newer_sha):
     headers = { "Authorization" : f"token {GITHUBKEY}" }
@@ -158,7 +175,7 @@ def main(filename="/var/log/autopuller"): # pragma: no cover
 
 
             # Restarts the services
-            restart_service()
+            restart_service(REPODIR)
 
             
             with open(filename, "r") as f:
@@ -175,9 +192,11 @@ def main(filename="/var/log/autopuller"): # pragma: no cover
         return False
 
 if __name__ == "__main__":
-    
+
     try:
-        main()
+        while True:
+            main()
+            os.sleep(int(INTERVAL))
     except Exception as e:
         logger.error(str(e))
         logger.error(sys.exc_info()[1])
