@@ -18,4 +18,3 @@ What does Autopuller do?  **Autopuller watches a Github Repository for changes, 
 - Linting will have a specific name and is allowed to be deployed.  This occurs when linting happens and pushes to the repository without re-running tests.
 - `Autopuller` assumes your stack can be rebuilt by docker-compose.  For my case, I expect my `frontend` docker to rebuild the frontend without manual intervention if `docker-compose up --build` is run.
 - You're okay with having the `autopuller` docker have access to the overall docker system (needed to restart the production dockers).
-
