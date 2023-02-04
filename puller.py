@@ -63,8 +63,7 @@ INTERVAL = os.environ.get("INTERVAL") or "60"
 def send_email(TEXT):  # pragma: no cover
     """Send email helper"""
 
-    cmd = f"echo '{TEXT}' | {SENDMAIL} '{SUBJECT}' -r '{FROM}' '{TO}'"
-    raise Exception("TODO: Need to put in shlex to sanitize")
+    cmd = f"echo {shlex.quote(TEXT)} | {SENDMAIL} {shlex.quote(SUBJECT)} -r {shlex.quote(FROM)} {shlex.quote(TO)}"
     return subprocess.call(cmd, shell=True)
 
 
