@@ -41,7 +41,7 @@ if not REPONAME:  # pragma: no cover
 
 if REPONAME[0] != "/":
     REPONAME = f"/{REPONAME}"
-if REPONAME[:-1] != "/":
+if REPONAME[-1] != "/":
     REPONAME = f"{REPONAME}/"
     
 
