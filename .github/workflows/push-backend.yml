@@ -1,0 +1,16 @@
+name: Jupiter Backend Tests
+on: push
+jobs:
+  backend-tests:
+    runs-on: ubuntu-latest 
+    env:
+      REMOTE: GITHUB
+      PYTHONDONTWRITEBYTECODE: 1  
+      PYTHONFLAGS: -B  
+
+    steps:
+      - uses: actions/checkout@v2
+        
+      - name: List the env variables
+        run: echo $DOCKERIZED && echo $PRODUCTION
+        
