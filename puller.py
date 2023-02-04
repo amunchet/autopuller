@@ -65,8 +65,10 @@ def check_lastrun(sha):
     # Step 2: Test to see if the tests are passing
     logger.debug(f"Checking last run of sha:{sha}")
     headers = {"Authorization": f"token {GITHUBKEY}"}
+    url = f"https://api.github.com/repos{REPONAME}actions/runs"
+    logger.debug(f"Check last run url: {url}")
     a = requests.get(
-        f"https://api.github.com/repos{REPONAME}actions/runs", headers=headers
+        url, headers=headers
     )
 
     logger.debug(a)

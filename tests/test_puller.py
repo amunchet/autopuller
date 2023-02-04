@@ -14,7 +14,7 @@ DIFFTWO = "3b63eb8191d3ba86c509e297cd9b88bfbfb49162"
 
 def test_check_lastrun():
     """Tests last run to see if actions completed correctly"""
-    # assert puller.check_lastrun(KNOWNSHA) is True
+    assert puller.check_lastrun(KNOWNSHA) is True
     assert puller.check_lastrun(KNOWNFAIL) is False
     assert puller.check_lastrun(RANDOMSHA) is False
 

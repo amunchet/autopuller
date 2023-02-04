@@ -10,7 +10,7 @@ jobs:
       PYTHONPATH: .
 
       GITHUBKEY: ${{secrets.GITHUBKEY}}
-      REPONAME:  /amunchet/autopuller/
+      REPONAME:  https://www.github.com/amunchet/autopuller/
 
 
     steps:
