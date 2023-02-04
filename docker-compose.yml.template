@@ -1,9 +1,10 @@
 version: "3.2"
 services:
   autopuller:
-    restart: unless-stopped
+    restart: always
     build: .
     volumes:
       - ./:/src
       - /var/run/docker.sock:/var/run/docker.sock
       - {{PATH}}:{{PATH}}
+      - {{CREDENTIALS}}:/root/.git-credentials:ro

@@ -4,6 +4,7 @@ import uuid
 import dotenv
 import requests
 import os
+import time
 import semantic_version
 import sys
 import shlex
@@ -50,21 +51,13 @@ if not REPODIR:  # pragma: no cover
 
 MASTERFILE = f"{REPODIR}/.git/refs/heads/master"  # Docker-compose mounts repo to /repo
 
-TO = os.environ.get("EMAIL_TO")
-FROM = os.environ.get("EMAIL_FROM")
-SUBJECT = os.environ.get("EMAIL_SUBJECT")
 
 SENDMAIL = os.environ.get("SENDMAIL_CMD") or "mail -s"
 LINTING_COMMIT_MSG = os.environ.get("LINTING_COMMIT_MSG") or "Automatic linting fix"
 
 INTERVAL = os.environ.get("INTERVAL") or "60"
+COMPOSEFILE = os.environ.get("COMPOSEFILE") or "docker-compose.yml"
 
-
-def send_email(TEXT):  # pragma: no cover
-    """Send email helper"""
-
-    cmd = f"echo {shlex.quote(TEXT)} | {SENDMAIL} {shlex.quote(SUBJECT)} -r {shlex.quote(FROM)} {shlex.quote(TO)}"
-    return subprocess.call(cmd, shell=True)
 
 
 def check_lastrun(sha):
@@ -138,7 +131,7 @@ def restart_service(repo_dir, dry_run=False):
     """
     Restarts the docker-compose stack
     """
-    cmd = ["docker-compose", "up", "--build", "-d"]
+    cmd = ["docker-compose", "-f", COMPOSEFILE, "up", "--build", "-d"]
 
     os.chdir(repo_dir)
 
@@ -202,19 +195,36 @@ def main(filename="/var/log/autopuller"):  # pragma: no cover
             subprocess.run("git config credential.helper store", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
             # Add global safe directory
-            
-            subprocess.run(["git", "config", "--global", "--add", "safe.directory", REPODIR], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            cmd = f"git config --globa --add safe.directory {REPODIR}"
+            logger.debug("Adding safe directory...")
+            logger.debug(str(cmd))
+
+            result = subprocess.run(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            if result.returncode == 0:
+                logger.debug("Git permissions OK")
+                logger.debug(result.stdout.decode("utf-8"))
+            else:
+                logger.error("Git permissions failed!")
+                logger.debug(result.stdout.decode("utf-8"))
+                logger.error(result.stderr.decode("utf-8"))
+                raise Exception("Git permissions failed")
+
             
             logger.debug("Starting git pull...")
-            subprocess.run("git pull", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            result = subprocess.run("git pull", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+            if result.returncode == 0:
+                logger.debug("Git pull OK")
+                logger.debug(result.stdout.decode("utf-8"))
+            else:
+                logger.error("Git pull failed!")
+                logger.error(result.stderr.decode("utf-8"))
+                raise Exception("Git pull failed")
 
             logger.debug("Git pull ended")
 
             # Restarts the services
             restart_service(REPODIR)
-
-            with open(filename, "r") as f:
-                send_email(f.read())
 
             return True
 
@@ -231,9 +241,8 @@ if __name__ == "__main__":  # pragma: no cover
     try:
         while True:
             main()
-            os.sleep(int(INTERVAL))
+            time.sleep(int(INTERVAL))
+            logger.debug(f"Sleeping {INTERVAL}...")
     except Exception as e:
         logger.error(str(e))
         logger.error(sys.exc_info()[1])
-        with open("/var/log/autopuller") as f:
-            send_email(f.read())
