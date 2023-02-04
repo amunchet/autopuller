@@ -189,9 +189,13 @@ def main(filename="/var/log/autopuller"):  # pragma: no cover
                 return False
 
             # Need to run git pull here
-            os.system("git config credential.helper store")
 
             os.chdir(REPODIR)
+            logger.debug("Current directory:")
+            logger.debug(os.listdir("."))
+
+            os.system("git config credential.helper store")
+
             # Add global safe directory
             
             subprocess.run(["git", "config", "--global", "--add", "safe.directory", REPODIR], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
