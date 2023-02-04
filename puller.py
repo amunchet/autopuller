@@ -191,6 +191,8 @@ def main(filename="/var/log/autopuller"):  # pragma: no cover
             # Need to run git pull here
             os.system("git config credential.helper store")
 
+            os.chdir(REPODIR)
+            
             logger.debug("Starting git pull...")
             os.system("git pull")
 
