@@ -7,10 +7,19 @@ jobs:
       REMOTE: GITHUB
       PYTHONDONTWRITEBYTECODE: 1  
       PYTHONFLAGS: -B
-      GITHUBKEY: ${{secrets.GITHUBKEY}}  
+      PYTHONPATH: .
+
+      GITHUBKEY: ${{secrets.GITHUBKEY}}
+      REPONAME:  /amunchet/autopuller/
+
 
     steps:
       - uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
         
 
       - name: List the env variables
@@ -19,3 +28,9 @@ jobs:
       - name: Check the secret
         run: echo $GITHUBKEY | head -c 3
         
+      - name: Install requirements.txt
+        run: pip3 install -r requirements.txt
+
+      - name: Run tests
+        run: pytest
+
