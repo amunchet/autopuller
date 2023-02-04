@@ -194,14 +194,14 @@ def main(filename="/var/log/autopuller"):  # pragma: no cover
             logger.debug("Current directory:")
             logger.debug(os.listdir("."))
 
-            os.system("git config credential.helper store")
+            subprocess.run("git config credential.helper store", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
             # Add global safe directory
             
-            subprocess.run(["git", "config", "--global", "--add", "safe.directory", REPODIR], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            subprocess.run(["git", "config", "--global", "--add", "safe.directory", REPODIR], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             
             logger.debug("Starting git pull...")
-            os.system("git pull")
+            subprocess.run("git pull", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
             logger.debug("Git pull ended")
 
