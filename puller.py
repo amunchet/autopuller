@@ -139,10 +139,15 @@ def restart_service(repo_dir, dry_run=False):
     if dry_run:
         return cmd
     else:  # pragma: no cover
-        subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        logger.debug("Restarting dockers...")
+        logger.debug(cmd)
+
+        result = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         if result.returncode == 0:
+            logger.debug("Service restart success!")
             logger.debug(result.stdout.decode("utf-8"))
         else:
+            logger.error("Service restart failed!")
             logger.error(result.stderr.decode("utf-8"))
         return result.returncode
 
