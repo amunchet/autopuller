@@ -131,8 +131,6 @@ def fetchSum():
         raise Exception(
             "Fetch Sum failed.  ENV file is probably empty.  Create .env with contents GITHUBKEY=XXXX"
         )
-    logger.warning(a.json())
-    logger.warning(url)
     return a.json()
 
 
