@@ -6,12 +6,15 @@ Find yourself just larger than single dockers, but too small for Kubernetes?  Ar
 
 What does Autopuller do?  **Autopuller watches a Github Repository for changes, then pulls and restarts the local repository's docker-compose when all actions pass.**
 
-### Required Files
-- .env: this contains the login information for github
+## Installation
+- Make sure you have `docker` and `docker-compose` installed.
+- Clone this repository (`git clone https://github.com/amunchet/autopuller`).
+- Run `setup.sh` and enter in the requested values.  You can also modify `.env.sample` and `docker-compose.yml.template` by hand if you wish (and rename them to `.env` and `docker-compose.yml`).
+- The docker `autopuller_1` will start automatically.
 
 ## Assumptions
 - Github Actions are being used.  Passing Github actions means deployment is allowed.
-- Deployment is happening in a place where a webhook can't reach (i.e. a private server)
+- Deployment is happening in a place where a webhook can't reach (i.e. a private server).
 - Linting will have a specific name and is allowed to be deployed.  This occurs when linting happens and pushes to the repository without re-running tests.
-- `Autopuller` assumes your stack can be rebuilt by docker-compose.  For my case, I expect my `frontend` docker to rebuild the frontend without manual intervention if `docker-compose up --build` is run
-- You're okay with having the `autopuller` docker have access to the overall docker system (needed to restart the production dockers)
+- `Autopuller` assumes your stack can be rebuilt by docker-compose.  For my case, I expect my `frontend` docker to rebuild the frontend without manual intervention if `docker-compose up --build` is run.
+- You're okay with having the `autopuller` docker have access to the overall docker system (needed to restart the production dockers).
