@@ -4,7 +4,7 @@ import sys
 
 # Set up a logger
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.WARNING)
 
 # Create a file handler and a stream handler
 if os.environ.get("REMOTE") == "GITHUB":
@@ -15,8 +15,8 @@ else:
 stream_handler = logging.StreamHandler(sys.stderr)
 
 # Set the level for both handlers
-file_handler.setLevel(logging.INFO)
-stream_handler.setLevel(logging.DEBUG)
+file_handler.setLevel(logging.WARNING)
+stream_handler.setLevel(logging.WARNING)
 
 # Create a formatter and set it for both handlers
 formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")

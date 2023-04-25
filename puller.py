@@ -177,11 +177,11 @@ def main(filename="/var/log/autopuller"):  # pragma: no cover
         logger.debug("Sums do not match!")
 
         if check_lastrun(fetch_sum):
-            logger.debug("Last run passed, proceeding.")
+            logger.warning("Last run passed, proceeding.")
             diffs = check_differences(master_sum, fetch_sum)
 
             if diffs == []:
-                logger.debug(
+                logger.error(
                     "No files changed.  Probably we have a newer version of the repo.  Exiting"
                 )
                 return False
@@ -195,7 +195,7 @@ def main(filename="/var/log/autopuller"):  # pragma: no cover
             subprocess.run("git config credential.helper store", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
             # Add global safe directory
-            cmd = f"git config --globa --add safe.directory {REPODIR}"
+            cmd = f"git config --global --add safe.directory {REPODIR}"
             logger.debug("Adding safe directory...")
             logger.debug(str(cmd))
 
@@ -210,18 +210,18 @@ def main(filename="/var/log/autopuller"):  # pragma: no cover
                 raise Exception("Git permissions failed")
 
             
-            logger.debug("Starting git pull...")
+            logger.warning("Starting git pull...")
             result = subprocess.run("git pull", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
             if result.returncode == 0:
-                logger.debug("Git pull OK")
-                logger.debug(result.stdout.decode("utf-8"))
+                logger.warning("Git pull OK")
+                logger.warning(result.stdout.decode("utf-8"))
             else:
                 logger.error("Git pull failed!")
                 logger.error(result.stderr.decode("utf-8"))
                 raise Exception("Git pull failed")
 
-            logger.debug("Git pull ended")
+            logger.warning("Git pull ended")
 
             # Restarts the services
             restart_service(REPODIR)
@@ -229,7 +229,7 @@ def main(filename="/var/log/autopuller"):  # pragma: no cover
             return True
 
         else:
-            logger.debug("Last run failed or not found.  Exiting")
+            logger.error("Last run failed or not found.  Exiting")
             return False
 
     else:
@@ -242,7 +242,7 @@ if __name__ == "__main__":  # pragma: no cover
         while True:
             main()
             time.sleep(int(INTERVAL))
-            logger.debug(f"Sleeping {INTERVAL}...")
+            logger.warning(f"Sleeping {INTERVAL}...")
     except Exception as e:
         logger.error(str(e))
         logger.error(sys.exc_info()[1])
