@@ -215,7 +215,6 @@ def main(filename="/var/log/autopuller"):  # pragma: no cover
                 logger.error(result.stderr.decode("utf-8"))
                 raise Exception("Git permissions failed")
 
-            
             logger.debug("Starting git pull...")
             result = subprocess.run(
                 "git pull", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE
