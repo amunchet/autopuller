@@ -124,7 +124,7 @@ def fetchSum():
         raise Exception(
             "Fetch Sum failed.  ENV file is probably empty.  Create .env with contents GITHUBKEY=XXXX"
         )
-        
+
     return a.json()
 
 
@@ -152,9 +152,11 @@ def restart_service(repo_dir, dry_run=False):
             logger.error("Service rebuild failed!")
             logger.error(result.stderr.decode("utf-8"))
 
-
         result_second = subprocess.run(
-            second_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, env={"PWD": repo_dir}
+            second_cmd,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            env={"PWD": repo_dir},
         )
         if result_second.returncode == 0:
             logger.debug("Service restart success!")
@@ -162,7 +164,6 @@ def restart_service(repo_dir, dry_run=False):
         else:
             logger.error("Service restart failed!")
             logger.error(result_second.stderr.decode("utf-8"))
-
 
         return result.returncode | result_second.returncode
 

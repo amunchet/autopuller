@@ -4,7 +4,7 @@ import sys
 
 # Set up a logger
 LEVEL = logging.WARNING
-if os.environ.get("DEBUG_LEVEL"): # pragma: no cover
+if os.environ.get("DEBUG_LEVEL"):  # pragma: no cover
     try:
         LEVEL = getattr(logging, os.environ.get("DEBUG_LEVEL"))
     except Exception:
