@@ -145,6 +145,9 @@ def restart_service(repo_dir, dry_run=False):
         result = subprocess.run(
             cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, env={"PWD": repo_dir}
         )
+        logger.error(result.stdout.decode('utf-8'))
+        logger.error(result.stderr.decode('utf-8'))
+
         if result.returncode == 0:
             logger.debug("Service rebuild success!")
             logger.debug(result.stdout.decode("utf-8"))
@@ -156,6 +159,9 @@ def restart_service(repo_dir, dry_run=False):
         result_second = subprocess.run(
             second_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, env={"PWD": repo_dir}
         )
+
+        logger.error(result_second.stdout.decode('utf-8'))
+        logger.error(result_second.stderr.decode('utf-8'))
         if result_second.returncode == 0:
             logger.debug("Service restart success!")
             logger.debug(result_second.stdout.decode("utf-8"))
