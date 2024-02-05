@@ -51,6 +51,10 @@ REPODIR = os.environ.get("REPODIR")
 if not REPODIR:  # pragma: no cover
     raise Exception("No REPODIR set")
 
+DOCKERDIR = os.environ.get("DOCKERDIR")
+if not DOCKERDIR:
+    DOCKERDIR = REPODIR
+
 MASTERFILE = f"{REPODIR}/.git/refs/heads/master"  # Docker-compose mounts repo to /repo
 
 
@@ -130,7 +134,7 @@ def restart_service(repo_dir, dry_run=False):
     """
     Restarts the docker-compose stack
     """
-    cmd = ["docker-compose", "-f", COMPOSEFILE, "up", "--build", "-d"]
+    cmd = ["docker-compose", "up", "--build", "-d"]
 
     os.chdir(repo_dir)
 
@@ -233,7 +237,7 @@ def main(filename="/var/log/autopuller"):  # pragma: no cover
             logger.warning("Git pull ended")
 
             # Restarts the services
-            restart_service(REPODIR)
+            restart_service(DOCKERDIR)
 
             return True
 
