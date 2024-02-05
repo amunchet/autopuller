@@ -145,12 +145,21 @@ def restart_service(repo_dir, dry_run=False):
     else:  # pragma: no cover
         logger.debug("Restarting dockers...")
         logger.debug(cmd)
+        logger.debug(repo_dir)
 
         result = subprocess.run(
             cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, env={"PWD": repo_dir}
         )
         logger.error(result.stdout.decode("utf-8"))
         logger.error(result.stderr.decode("utf-8"))
+
+        # Debugging
+        result = subprocess.run(
+            ["ls"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, env={"PWD": repo_dir}
+        )
+        logger.debug(result.stdout.decode("utf-8"))
+        logger.debug(result.stderr.decode("utf-8"))
+
 
         if result.returncode == 0:
             logger.debug("Service rebuild success!")
