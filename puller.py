@@ -122,11 +122,13 @@ def fetchSum():
         headers = {"Authorization": f"token {GITHUBKEY}"}
         url = f"https://api.github.com/repos{REPONAME}commits/master"
         a = requests.get(url, headers=headers)
+        logger.debug(a.text)
     except TypeError:  # pragma: no cover
         logger.error(f"Fetch Sum failed: {REPONAME}")
         raise Exception(
             "Fetch Sum failed.  ENV file is probably empty.  Create .env with contents GITHUBKEY=XXXX"
         )
+
     return a.json()
 
 
@@ -134,12 +136,12 @@ def restart_service(repo_dir, dry_run=False):
     """
     Restarts the docker-compose stack
     """
-    cmd = ["docker-compose", "up", "--build", "-d"]
-
+    cmd = ["docker-compose", "-f", COMPOSEFILE, "up", "--build", "-d"]
+    second_cmd = ["docker-compose", "-f", COMPOSEFILE, "restart"]
     os.chdir(repo_dir)
 
     if dry_run:
-        return cmd
+        return cmd, second_cmd
     else:  # pragma: no cover
         logger.debug("Restarting dockers...")
         logger.debug(cmd)
@@ -147,13 +149,33 @@ def restart_service(repo_dir, dry_run=False):
         result = subprocess.run(
             cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, env={"PWD": repo_dir}
         )
+        logger.error(result.stdout.decode("utf-8"))
+        logger.error(result.stderr.decode("utf-8"))
+
         if result.returncode == 0:
-            logger.debug("Service restart success!")
+            logger.debug("Service rebuild success!")
             logger.debug(result.stdout.decode("utf-8"))
         else:
-            logger.error("Service restart failed!")
+            logger.error("Service rebuild failed!")
             logger.error(result.stderr.decode("utf-8"))
-        return result.returncode
+
+        result_second = subprocess.run(
+            second_cmd,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            env={"PWD": repo_dir},
+        )
+
+        logger.error(result_second.stdout.decode("utf-8"))
+        logger.error(result_second.stderr.decode("utf-8"))
+        if result_second.returncode == 0:
+            logger.debug("Service restart success!")
+            logger.debug(result_second.stdout.decode("utf-8"))
+        else:
+            logger.error("Service restart failed!")
+            logger.error(result_second.stderr.decode("utf-8"))
+
+        return result.returncode | result_second.returncode
 
 
 def list_differences_commits(older_sha, newer_sha):

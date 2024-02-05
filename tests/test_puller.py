@@ -44,7 +44,8 @@ def test_restart_service():
     Tests restarting the service
     """
     assert os.getcwd() != "/tmp"
-    assert puller.restart_service("/tmp", True) == [
+    assert len(puller.restart_service("/tmp", True)) == 2
+    assert puller.restart_service("/tmp", True)[0] == [
         "docker-compose",
         "-f",
         "{{COMPOSEFILE}}",
