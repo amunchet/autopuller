@@ -136,8 +136,9 @@ def restart_service(repo_dir, dry_run=False):
     """
     Restarts the docker-compose stack
     """
-    cmd = ["docker-compose", "-f", COMPOSEFILE, "up", "--build", "-d"]
-    second_cmd = ["docker-compose", "-f", COMPOSEFILE, "restart"]
+    cmd = ["docker-compose", "-f", COMPOSEFILE, "build", "--pull"]
+    second_cmd = ["docker-compose", "-f", COMPOSEFILE, "down"]
+    third_cmd = ["docker-compose", "-f", COMPOSEFILE, "up", "-d"]
     os.chdir(repo_dir)
 
     if dry_run:
@@ -161,6 +162,7 @@ def restart_service(repo_dir, dry_run=False):
             logger.error("Service rebuild failed!")
             logger.error(result.stderr.decode("utf-8"))
 
+        # Second command
         result_second = subprocess.run(
             second_cmd,
             stdout=subprocess.PIPE,
@@ -171,13 +173,31 @@ def restart_service(repo_dir, dry_run=False):
         logger.error(result_second.stdout.decode("utf-8"))
         logger.error(result_second.stderr.decode("utf-8"))
         if result_second.returncode == 0:
-            logger.debug("Service restart success!")
+            logger.debug("Service down success!")
             logger.debug(result_second.stdout.decode("utf-8"))
         else:
-            logger.error("Service restart failed!")
+            logger.error("Service down failed!")
             logger.error(result_second.stderr.decode("utf-8"))
 
-        return result.returncode | result_second.returncode
+        # Third Command
+        result_third = subprocess.run(
+            third_cmd,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            env={"PWD": repo_dir},
+        )
+
+        logger.error(result_third.stdout.decode("utf-8"))
+        logger.error(result_third.stderr.decode("utf-8"))
+        if result_third.returncode == 0:
+            logger.debug("Service restart success!")
+            logger.debug(result_third.stdout.decode("utf-8"))
+        else:
+            logger.error("Service restart failed!")
+            logger.error(result_third.stderr.decode("utf-8"))
+
+
+        return result.returncode | result_second.returncode | result_third.returncode
 
 
 def list_differences_commits(older_sha, newer_sha):
