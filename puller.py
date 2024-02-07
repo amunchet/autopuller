@@ -55,6 +55,9 @@ DOCKERDIR = os.environ.get("DOCKERDIR")
 if not DOCKERDIR:
     DOCKERDIR = REPODIR
 
+# Check if we want to force pulls
+FORCEPULL = os.environ.get("FORCEPULL")
+
 MASTERFILE = f"{REPODIR}/.git/refs/heads/master"  # Docker-compose mounts repo to /repo
 
 
@@ -136,13 +139,16 @@ def restart_service(repo_dir, dry_run=False):
     """
     Restarts the docker-compose stack
     """
-    cmd = ["docker-compose", "-f", COMPOSEFILE, "build", "--pull"]
+    cmd = ["docker-compose", "-f", COMPOSEFILE, "build"]
+    if FORCEPULL:
+        cmd.append("--pull")
+        
     second_cmd = ["docker-compose", "-f", COMPOSEFILE, "down"]
     third_cmd = ["docker-compose", "-f", COMPOSEFILE, "up", "-d"]
     os.chdir(repo_dir)
 
     if dry_run:
-        return cmd, second_cmd
+        return cmd, second_cmd, third_cmd
     else:  # pragma: no cover
         logger.debug("Restarting dockers...")
         logger.debug(cmd)
